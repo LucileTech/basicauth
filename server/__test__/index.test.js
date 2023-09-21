@@ -42,29 +42,17 @@ describe('Express App Tests', () => {
 
 
 
-  // afterAll(async () => {
-
-    it('should delete the user with chosen email /delete', async () => {
-      // const response = await request(app).delete('/delete');
-
-      // expect(response.status).toBe(200);
-      // expect(response.body).toBe('Hello World');
+  afterAll(async () => {
 
       const checkUserMail = {
         email: 'test@example.com',
       };
-
-      console.log(checkUserMail)
-
+      
       const response = await request(app)
         .delete('/delete')
         .send(checkUserMail)
       
-      console.log('response', response)
+    mongoose.disconnect()
 
-      mongoose.disconnect()
-
-    });
-
-  // });
+  });
 });

@@ -6,8 +6,6 @@ const UserModel = require('./models/model.user')
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const jwt = require('jsonwebtoken');
-// const isAuthenticated = require("./middlewares/jwt.middleware");
-
 const app = express(); 
 app.use(express.json())
 app.use(cors())
@@ -22,55 +20,19 @@ app.get('/', (req, res) => {
 res.json('Hello World')
 }); 
 
-app.get('/user',  async (req, res, next) => {
+app.delete('/delete', async (req, res) => { 
     const { email } = req.body
-    console.log(req.body)
-    console.log('Hello')
-
     try {
-        // const foundUser = await UserModel.deleteOne(
-        //     { email }
-        // )
-        if ( isNil(email) ) return res.json("not valid input")
-
-        const foundUserByMail = await UserModel.findOne(
-        {email: email }
-        //     , (err, numberRemoved) => {
-        //     if(numberRemoved === 0) next(new Error(`${email} was not found.`));
-        //   } 
-        )
-
-        res.status(200).json(foundUserByMail)
+        const userDeleted = await UserModel.findOneAndDelete({
+                email: email,
+        }
+        );
+        res.status(200).json(userDeleted);
+    } catch (err) {
+        console.error("Database Error:", err.message); 
+        res.status(500).json(err.message)
     }
-
-    catch (err) {
-        res.json(err)
-    }
-})
-
-app.delete('/delete',  async (req, res, next) => {
-    const { email } = req.body
-    console.log(req.body)
-
-    try {
-        // const foundUser = await UserModel.deleteOne(
-        //     { email }
-        // )
-        if ( isNil(email) ) return res.json("not valid input")
-
-        await UserModel.findOneAndDelete(
-        {email: email }
-        //     , (err, numberRemoved) => {
-        //     if(numberRemoved === 0) next(new Error(`${email} was not found.`));
-        //   } 
-        )
-        res.status(200).json(res)
-    }
-
-    catch (err) {
-        res.json(err)
-    }
-})
+}); 
 
 app.post('/register', async (req, res) => { 
     const { username, email, password } = req.body
@@ -121,11 +83,6 @@ app.post('/login', async (req, res) => {
         res.status(500).json(err.message)
     }
 }); 
-
-// app.get('/dashboard', isAuthenticated, (req, res) => { 
-//     res.json('Hello authentificated user!')
-//     }); 
-
 
 app.listen(process.env.port || 3001); 
 console.log('Running at Port 3001'); 
